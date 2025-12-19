@@ -2,40 +2,52 @@ package com.example.demo.service.impl;
 
 import com.example.demo.exception.BadRequestException;
 import com.example.demo.exception.ResourceNotFoundException;
-import com.example.demo.model.UserAccount;
-import com.example.demo.repository.UserAccountRepository;
-import com.example.demo.service.UserAccountService;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import com.example.demo.model.EmployeeProfile;
+import com.example.demo.repository.EmployeeProfileRepository;
+import com.example.demo.service.EmployeeProfileService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Service
 @Transactional
-public class UserAccountServiceImpl implements UserAccountService {
+public class EmployeeProfileServiceImpl implements EmployeeProfileService {
 
-    private final UserAccountRepository userRepo;
-    private final PasswordEncoder passwordEncoder;
+    private final EmployeeProfileRepository repo;
 
-    public UserAccountServiceImpl(UserAccountRepository userRepo, PasswordEncoder passwordEncoder) {
-        this.userRepo = userRepo;
-        this.passwordEncoder = passwordEncoder;
+    public EmployeeProfileServiceImpl(EmployeeProfileRepository repo) {
+        this.repo = repo;
     }
 
     @Override
-    public UserAccount register(UserAccount user) {
-        if (userRepo.existsByEmail(user.getEmail())) {
+    public EmployeeProfile createEmployee(EmployeeProfile employee) {
+        if (repo.existsByEmployeeId(employee.getEmployeeId())) {
+            throw new BadRequestException("EmployeeId already exists");
+        }
+        if (repo.existsByEmail(employee.getEmail())) {
             throw new BadRequestException("Email already exists");
         }
-        user.setPasswordHash(passwordEncoder.encode(user.getPasswordHash()));
-        if (user.getRole() == null || user.getRole().isBlank()) {
-            user.setRole("ADMIN");
-        }
-        return userRepo.save(user);
+        employee.setActive(true);
+        employee.setCreatedAt(LocalDateTime.now());
+        return repo.save(employee);
     }
 
     @Override
-    public UserAccount findByEmail(String email) {
-        return userRepo.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    public EmployeeProfile getEmployeeById(Long id) {
+        return repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
+    }
+
+    @Override
+    public List<EmployeeProfile> getAllEmployees() {
+        return repo.findAll();
+    }
+
+    @Override
+    public EmployeeProfile updateEmployeeStatus(Long id, boolean active) {
+        EmployeeProfile emp = getEmployeeById(id);
+        emp.setActive(active);
+        return repo.save(emp);
     }
 }
