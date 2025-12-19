@@ -4,5 +4,9 @@ public class UserAccount {
      private long id;
      private String fullName;
      private String email;
-     private String
+     private String passwordHash;
+     private String role;
+     private Boolean active;
+
+     public UserAccount
 }
