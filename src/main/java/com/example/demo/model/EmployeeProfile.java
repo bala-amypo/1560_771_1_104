@@ -91,3 +91,5 @@ public class EmployeeProfile {
 
     public String getDepartment() {
         return department;
+}
+}
