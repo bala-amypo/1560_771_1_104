@@ -8,5 +8,8 @@ public class UserAccount {
      private String role;
      private Boolean active;
 
-     public UserAccount
+     public UserAccount {
+
+     }
+     public UserAccount()
 }
