@@ -12,6 +12,8 @@ public class UserAccount {
 
      }
      public UserAccount(String fullName,String email,String passwordHash,String role,Boolean active){
-        this.
+        this.fullName = fullName;
+        this.email = email;
+        
      }
 }
