@@ -1,32 +1,53 @@
 package com.example.demo.model;
 
-public class DeviceCatalogitem {
-    private long id;
+import jakarta.persistence.*;
+
+@Entity
+@Table(
+    name = "device_catalog_items",
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = "device_code")
+    }
+)
+public class DeviceCatalogItem {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "device_code", nullable = false, unique = true)
     private String deviceCode;
+
+    @Column(nullable = false)
     private String deviceType;
+
+    @Column(nullable = false)
     private String model;
-    private int maxAllowedPerEmployee;
-    private Boolean active;
 
-    public DeviceCatalogitem(){
+    @Column(nullable = false)
+    private Integer maxAllowedPerEmployee;
 
+    @Column(nullable = false)
+    private Boolean active = true;
+
+    // ✅ No-args constructor (required by JPA)
+    public DeviceCatalogItem() {
     }
 
-    public DeviceCatalogitem(String deviceCode, String deviceType, String model, int maxAllowedPerEmployee,
-            Boolean active) {
+    // ✅ Core fields constructor
+    public DeviceCatalogItem(String deviceCode, String deviceType, String model,
+                             Integer maxAllowedPerEmployee, Boolean active) {
         this.deviceCode = deviceCode;
         this.deviceType = deviceType;
         this.model = model;
         this.maxAllowedPerEmployee = maxAllowedPerEmployee;
-        this.active = active;
+        this.active = (active != null) ? active : true;
     }
 
-    public long getId() {
+    // ---------- Getters & Setters ----------
+
+    public Long getId() {
         return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public String getDeviceCode() {
@@ -53,11 +74,11 @@ public class DeviceCatalogitem {
         this.model = model;
     }
 
-    public int getMaxAllowedPerEmployee() {
+    public Integer getMaxAllowedPerEmployee() {
         return maxAllowedPerEmployee;
     }
 
-    public void setMaxAllowedPerEmployee(int maxAllowedPerEmployee) {
+    public void setMaxAllowedPerEmployee(Integer maxAllowedPerEmployee) {
         this.maxAllowedPerEmployee = maxAllowedPerEmployee;
     }
 
@@ -68,5 +89,4 @@ public class DeviceCatalogitem {
     public void setActive(Boolean active) {
         this.active = active;
     }
-    
 }
