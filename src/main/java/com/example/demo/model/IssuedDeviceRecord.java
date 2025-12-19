@@ -1,74 +1,91 @@
 package com.example.demo.model;
 
+import jakarta.persistence.*;
 import java.time.LocalDate;
 
+@Entity
+@Table(name = "issued_device_record")
 public class IssuedDeviceRecord {
-    private long id;
-    private long employeeID;
-    private long deviceItemId;
-    private LocalDate issuDate;
-    private LocalDate returDate;
-    private String status;
 
-    public IssuedDeviceRecord(){
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
+    @Column(name = "employee_id", nullable = false)
+    private Long employeeId;
+
+    @Column(name = "device_item_id", nullable = false)
+    private Long deviceItemId;
+
+    @Column(name = "issued_date", nullable = false)
+    private LocalDate issuedDate;
+
+    @Column(name = "returned_date")
+    private LocalDate returnedDate;
+
+    @Column(name = "status", nullable = false)
+    private String status; // "ISSUED" or "RETURNED"
+
+    public IssuedDeviceRecord() {
     }
 
-    public IssuedDeviceRecord(long employeeID, long deviceItemId, LocalDate issuDate, LocalDate returDate,
-            String status) {
-        this.employeeID = employeeID;
+    public IssuedDeviceRecord(Long employeeId, Long deviceItemId, LocalDate issuedDate, LocalDate returnedDate) {
+        this.employeeId = employeeId;
         this.deviceItemId = deviceItemId;
-        this.issuDate = issuDate;
-        this.returDate = returDate;
-        this.status = status;
+        this.issuedDate = issuedDate;
+        this.returnedDate = returnedDate;
+        this.status = (returnedDate == null) ? "ISSUED" : "RETURNED";
     }
 
-    public long getId() {
+    @PrePersist
+    @PreUpdate
+    private void updateStatus() {
+        this.status = (this.returnedDate == null) ? "ISSUED" : "RETURNED";
+    }
+
+    // Getters and Setters
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public long getEmployeeID() {
-        return employeeID;
+    public Long getEmployeeId() {
+        return employeeId;
     }
 
-    public void setEmployeeID(long employeeID) {
-        this.employeeID = employeeID;
+    public void setEmployeeId(Long employeeId) {
+        this.employeeId = employeeId;
     }
 
-    public long getDeviceItemId() {
+    public Long getDeviceItemId() {
         return deviceItemId;
     }
 
-    public void setDeviceItemId(long deviceItemId) {
+    public void setDeviceItemId(Long deviceItemId) {
         this.deviceItemId = deviceItemId;
     }
 
-    public LocalDate getIssuDate() {
-        return issuDate;
+    public LocalDate getIssuedDate() {
+        return issuedDate;
     }
 
-    public void setIssuDate(LocalDate issuDate) {
-        this.issuDate = issuDate;
+    public void setIssuedDate(LocalDate issuedDate) {
+        this.issuedDate = issuedDate;
     }
 
-    public LocalDate getReturDate() {
-        return returDate;
+    public LocalDate getReturnedDate() {
+        return returnedDate;
     }
 
-    public void setReturDate(LocalDate returDate) {
-        this.returDate = returDate;
+    public void setReturnedDate(LocalDate returnedDate) {
+        this.returnedDate = returnedDate;
+        this.status = (returnedDate == null) ? "ISSUED" : "RETURNED";
     }
 
     public String getStatus() {
         return status;
     }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-    
 }
