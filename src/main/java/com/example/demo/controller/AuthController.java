@@ -1,38 +1,63 @@
 package com.example.demo.controller;
 
-// import com.example.demo.dto.AuthRequest;
-// import com.example.demo.dto.AuthResponse;
 import com.example.demo.model.UserAccount;
-import com.example.demo.security.JwtUtil;
 import com.example.demo.service.UserAccountService;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
+import javax.crypto.SecretKey;
+import java.util.Date;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 
     private final UserAccountService userService;
-    // private final JwtUtil jwtUtil;
-    // private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    public AuthController(UserAccountService userService) {
+    // Secret key for signing JWT (in real apps, load from config)
+    private final SecretKey secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    private final long expirationMs = 86400000; // 24 hours
+
+    public AuthController(UserAccountService userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
-        // this.jwtUtil = jwtUtil;
-        // this.passwordEncoder = passwordEncoder;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@Valid @RequestBody AuthRequest request) {
-        UserAccount user = userService.findByEmail(request.getEmail());
-        // if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
-        //     throw new BadCredentialsException("Invalid credentials");
+    public ResponseEntity<?> login(@RequestParam String email, @RequestParam String password) {
+        UserAccount user = userService.findByEmail(email);
+        if (!passwordEncoder.matches(password, user.getPasswordHash())) {
+            throw new BadCredentialsException("Invalid credentials");
         }
-        String token = jwtUtil.generateToken(user);
-        return ResponseEntity.ok(new AuthResponse(token, user.getId(), user.getEmail(), user.getRole()));
+
+        // Generate JWT directly here
+        Date now = new Date();
+        Date expiry = new Date(now.getTime() + expirationMs);
+
+        String token = Jwts.builder()
+                .setSubject(user.getEmail())
+                .claim("userId", user.getId())
+                .claim("role", user.getRole())
+                .setIssuedAt(now)
+                .setExpiration(expiry)
+                .signWith(secretKey)
+                .compact();
+
+        // Return simple JSON response
+        return ResponseEntity.ok(
+            Map.of(
+                "token", token,
+                "userId", user.getId(),
+                "email", user.getEmail(),
+                "role", user.getRole()
+            )
+        );
     }
 }
