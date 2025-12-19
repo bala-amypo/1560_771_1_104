@@ -38,28 +38,28 @@ public class EmployeeProfile {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    // 🔹 No-args constructor (REQUIRED by JPA)
+    // ✅ REQUIRED by JPA
     public EmployeeProfile() {
     }
 
-    // 🔹 Core fields constructor
+    // ✅ Core constructor
     public EmployeeProfile(String employeeId, String fullName, String email,
                            String department, String jobRole, Boolean active) {
         this.employeeId = employeeId;
         this.fullName = fullName;
         this.email = email;
         this.department = department;
-        this.jobRole = jobRole != null ? jobRole : "STAFF";
-        this.active = active != null ? active : true;
+        this.jobRole = (jobRole != null) ? jobRole : "STAFF";
+        this.active = (active != null) ? active : true;
     }
 
-    // 🔹 Auto-set createdAt
+    // ✅ Auto timestamp
     @PrePersist
     public void onCreate() {
         this.createdAt = LocalDateTime.now();
     }
 
-    // 🔹 Getters & Setters
+    // -------- GETTERS & SETTERS --------
 
     public Long getId() {
         return id;
@@ -91,18 +91,3 @@ public class EmployeeProfile {
 
     public String getDepartment() {
         return department;
-    }
-
-    public void setDepartment(String department) {
-        this.department = department;
-    }
-
-    public String getJobRole() {
-        return jobRole;
-    }
-
-    public void setJobRole(String jobRole) {
-        this.jobRole = jobRole;
-    }
-
-    pub
