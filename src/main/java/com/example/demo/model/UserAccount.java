@@ -11,5 +11,7 @@ public class UserAccount {
      public UserAccount {
 
      }
-     public UserAccount()
+     public UserAccount(String fullName,String email,String passwordHash,String role,Boolean active){
+        this.
+     }
 }
