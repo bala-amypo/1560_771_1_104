@@ -1,12 +1,11 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.AuthRequest;
 import com.example.demo.model.UserAccount;
 import com.example.demo.service.UserAccountService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -19,15 +18,15 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@Valid @RequestBody AuthRequest request) {
-        UserAccount user = userService.findByEmail(request.getEmail());
+    public ResponseEntity<String> login(@RequestBody Map<String, String> credentials) {
+        String email = credentials.get("email");
         
-        // Basic check to see if user exists (Simple logic for now)
+        UserAccount user = userService.findByEmail(email);
+        
         if (user == null) {
-            return ResponseEntity.status(401).body("User not found");
+            return ResponseEntity.status(401).body("Authentication Failed: User not found");
         }
 
-        // Returning a simple success message since JWT is removed
-        return ResponseEntity.ok("Login successful for user: " + user.getEmail());
+        return ResponseEntity.ok("Login successful for: " + user.getEmail());
     }
 }
