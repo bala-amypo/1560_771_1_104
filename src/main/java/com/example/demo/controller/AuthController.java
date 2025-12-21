@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.AuthRequest; // Uncommented
-import com.example.demo.dto.AuthResponse; // Uncommented
+// import com.example.demo.dto.AuthRequest;
+// import com.example.demo.dto.AuthResponse;
 import com.example.demo.model.UserAccount;
 import com.example.demo.security.JwtUtil;
 import com.example.demo.service.UserAccountService;
@@ -17,22 +17,22 @@ import jakarta.validation.Valid;
 public class AuthController {
 
     private final UserAccountService userService;
-    private final JwtUtil jwtUtil; // Uncommented
+    // private final JwtUtil jwtUtil;
+    // private final PasswordEncoder passwordEncoder;
 
-    public AuthController(UserAccountService userService, JwtUtil jwtUtil) {
+    public AuthController(UserAccountService userService) {
         this.userService = userService;
-        this.jwtUtil = jwtUtil; // Uncommented
+        // this.jwtUtil = jwtUtil;
+        // this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody AuthRequest request) {
         UserAccount user = userService.findByEmail(request.getEmail());
-        
-        // Removed the stray closing brace that was here
-        
+        // if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
+        //     throw new BadCredentialsException("Invalid credentials");
+        }
         String token = jwtUtil.generateToken(user);
-        
-        // Added the token to the response (assuming AuthResponse takes a token)
-        return ResponseEntity.ok(new AuthResponse(token)); 
+        return ResponseEntity.ok();
     }
 }
