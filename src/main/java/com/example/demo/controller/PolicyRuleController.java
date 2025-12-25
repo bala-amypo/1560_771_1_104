@@ -1,12 +1,11 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.PolicyRule;
-import com.example.demo.service.PolicyRuleService;
-import org.springframework.http.ResponseEntity;
+import java.util.List;
+
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
-import java.util.List;
+import com.example.demo.model.PolicyRule;
+import com.example.demo.service.PolicyRuleService;
 
 @RestController
 @RequestMapping("/api/policy-rules")
@@ -19,17 +18,29 @@ public class PolicyRuleController {
     }
 
     @PostMapping
-    public ResponseEntity<PolicyRule> create(@Valid @RequestBody PolicyRule rule) {
-        return ResponseEntity.ok(service.createRule(rule));
-    }
-
-    @GetMapping("/active")
-    public ResponseEntity<List<PolicyRule>> active() {
-        return ResponseEntity.ok(service.getActiveRules());
+    public PolicyRule createRule(@RequestBody PolicyRule rule) {
+        return service.createRule(rule);
     }
 
     @GetMapping
-    public ResponseEntity<List<PolicyRule>> all() {
-        return ResponseEntity.ok(service.getAllRules());
+    public List<PolicyRule> getAllRules() {
+        return service.getAllRules();
+    }
+
+    @GetMapping("/active")
+    public List<PolicyRule> getActiveRules() {
+        return service.getActiveRules();
+    }
+
+    @PutMapping("/{id}/active")
+    public PolicyRule updateActiveStatus(
+            @PathVariable Long id,
+            @RequestParam boolean active) {
+        return service.updateRuleActive(id, active);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteRule(@PathVariable Long id) {
+        service.deleteRule(id);
     }
 }
