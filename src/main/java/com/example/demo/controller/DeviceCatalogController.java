@@ -1,12 +1,11 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.DeviceCatalogItem;
-import com.example.demo.service.DeviceCatalogService;
-import org.springframework.http.ResponseEntity;
+import java.util.List;
+
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
-import java.util.List;
+import com.example.demo.model.DeviceCatalogItem;
+import com.example.demo.service.DeviceCatalogService;
 
 @RestController
 @RequestMapping("/api/devices")
@@ -18,18 +17,36 @@ public class DeviceCatalogController {
         this.service = service;
     }
 
+    // POST /api/devices
     @PostMapping
-    public ResponseEntity<DeviceCatalogItem> create(@Valid @RequestBody DeviceCatalogItem item) {
-        return ResponseEntity.ok(service.createItem(item));
+    public DeviceCatalogItem createDevice(
+            @RequestBody DeviceCatalogItem item) {
+        return service.createItem(item);
     }
 
-    @PutMapping("/{id}/active")
-    public ResponseEntity<DeviceCatalogItem> updateActive(@PathVariable Long id, @RequestParam boolean active) {
-        return ResponseEntity.ok(service.updateActiveStatus(id, active));
-    }
-
+    // GET /api/devices
     @GetMapping
-    public ResponseEntity<List<DeviceCatalogItem>> getAll() {
-        return ResponseEntity.ok(service.getAllItems());
+    public List<DeviceCatalogItem> getAllDevices() {
+        return service.getAllItems();
+    }
+
+    // GET /api/devices/{id}
+    @GetMapping("/{id}")
+    public DeviceCatalogItem getDeviceById(@PathVariable Long id) {
+        return service.getItemById(id);
+    }
+
+    // PUT /api/devices/{id}/active?active=true
+    @PutMapping("/{id}/active")
+    public DeviceCatalogItem updateActiveStatus(
+            @PathVariable Long id,
+            @RequestParam boolean active) {
+        return service.updateActiveStatus(id, active);
+    }
+
+    // DELETE /api/devices/{id}
+    @DeleteMapping("/{id}")
+    public void deleteDevice(@PathVariable Long id) {
+        service.deleteItem(id);
     }
 }

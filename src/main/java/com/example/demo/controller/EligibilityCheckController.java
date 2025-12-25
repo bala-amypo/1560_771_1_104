@@ -1,11 +1,11 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.EligibilityCheckRecord;
-import com.example.demo.service.EligibilityCheckService;
-import org.springframework.http.ResponseEntity;
+import java.util.List;
+
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import com.example.demo.model.EligibilityCheckRecord;
+import com.example.demo.service.EligibilityCheckService;
 
 @RestController
 @RequestMapping("/api/eligibility")
@@ -18,13 +18,20 @@ public class EligibilityCheckController {
     }
 
     @PostMapping("/validate/{employeeId}/{deviceItemId}")
-    public ResponseEntity<EligibilityCheckRecord> validate(@PathVariable Long employeeId,
-                                                           @PathVariable Long deviceItemId) {
-        return ResponseEntity.ok(service.validateEligibility(employeeId, deviceItemId));
+    public EligibilityCheckRecord validate(
+            @PathVariable Long employeeId,
+            @PathVariable Long deviceItemId) {
+
+        return service.validateEligibility(employeeId, deviceItemId);
     }
 
     @GetMapping("/employee/{employeeId}")
-    public ResponseEntity<List<EligibilityCheckRecord>> byEmployee(@PathVariable Long employeeId) {
-        return ResponseEntity.ok(service.getChecksByEmployee(employeeId));
+    public List<EligibilityCheckRecord> byEmployee(@PathVariable Long employeeId) {
+        return service.getChecksByEmployee(employeeId);
+    }
+
+    @GetMapping("/{id}")
+    public EligibilityCheckRecord getById(@PathVariable Long id) {
+        return service.getById(id);
     }
 }

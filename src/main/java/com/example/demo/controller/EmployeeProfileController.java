@@ -1,12 +1,11 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.EmployeeProfile;
-import com.example.demo.service.EmployeeProfileService;
-import org.springframework.http.ResponseEntity;
+import java.util.List;
+
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
-import java.util.List;
+import com.example.demo.model.EmployeeProfile;
+import com.example.demo.service.EmployeeProfileService;
 
 @RestController
 @RequestMapping("/api/employees")
@@ -18,23 +17,36 @@ public class EmployeeProfileController {
         this.service = service;
     }
 
+    // POST /api/employees
     @PostMapping
-    public ResponseEntity<EmployeeProfile> create(@Valid @RequestBody EmployeeProfile employee) {
-        return ResponseEntity.ok(service.createEmployee(employee));
+    public EmployeeProfile createEmployee(
+            @RequestBody EmployeeProfile employee) {
+        return service.createEmployee(employee);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<EmployeeProfile> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(service.getEmployeeById(id));
-    }
-
+    // GET /api/employees
     @GetMapping
-    public ResponseEntity<List<EmployeeProfile>> getAll() {
-        return ResponseEntity.ok(service.getAllEmployees());
+    public List<EmployeeProfile> getAllEmployees() {
+        return service.getAllEmployees();
     }
 
+    // GET /api/employees/{id}
+    @GetMapping("/{id}")
+    public EmployeeProfile getEmployeeById(@PathVariable Long id) {
+        return service.getEmployeeById(id);
+    }
+
+    // PUT /api/employees/{id}/status?active=true
     @PutMapping("/{id}/status")
-    public ResponseEntity<EmployeeProfile> updateStatus(@PathVariable Long id, @RequestParam boolean active) {
-        return ResponseEntity.ok(service.updateEmployeeStatus(id, active));
+    public EmployeeProfile updateStatus(
+            @PathVariable Long id,
+            @RequestParam boolean active) {
+        return service.updateEmployeeStatus(id, active);
+    }
+
+    // DELETE /api/employees/{id}
+    @DeleteMapping("/{id}")
+    public void deleteEmployee(@PathVariable Long id) {
+        service.deleteEmployee(id);
     }
 }
